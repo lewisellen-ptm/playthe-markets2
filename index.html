@@ -1,0 +1,483 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(18px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{transform:scale(0.7);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.anim-float{animation:floatUp 0.45s ease both;}
+.anim-pop{animation:pop 0.35s ease both;}
+.gw{overflow:hidden;border-radius:var(--border-radius-lg);}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:#26215C;}
+.topbar-title{font-size:15px;font-weight:500;color:#CECBF6;letter-spacing:0.05em;}
+.topbar-wallet{display:flex;align-items:center;gap:5px;font-size:13px;color:#AFA9EC;}
+.topbar-wallet b{color:#EEEDFE;font-weight:500;}
+.ticker-wrap{background:#3C3489;overflow:hidden;height:28px;display:flex;align-items:center;}
+.ticker-inner{display:flex;white-space:nowrap;animation:ticker 18s linear infinite;}
+.ticker-item{font-size:11px;font-weight:500;padding:0 18px;color:#CECBF6;letter-spacing:0.06em;}
+.ticker-item .up{color:#5DCAA5;}.ticker-item .dn{color:#F09595;}
+.scr{display:none;padding:16px;}
+.scr.on{display:block;}
+
+.splash-bg{background:linear-gradient(160deg,#26215C 0%,#3C3489 50%,#534AB7 100%);padding:32px 20px 28px;text-align:center;}
+.splash-icon-ring{width:80px;height:80px;border-radius:50%;background:#534AB7;border:3px solid #7F77DD;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:pulse 2.5s ease-in-out infinite;}
+.splash-title{font-size:26px;font-weight:500;color:#EEEDFE;letter-spacing:0.02em;margin-bottom:6px;}
+.splash-sub{font-size:13px;color:#AFA9EC;line-height:1.6;margin-bottom:24px;}
+.splash-stats{display:flex;gap:8px;justify-content:center;margin-bottom:24px;}
+.splash-stat{background:rgba(255,255,255,0.09);border:0.5px solid rgba(255,255,255,0.18);border-radius:var(--border-radius-md);padding:10px 14px;text-align:center;flex:1;}
+.splash-stat-num{font-size:20px;font-weight:500;color:#EEEDFE;}
+.splash-stat-lbl{font-size:11px;color:#AFA9EC;margin-top:2px;}
+.splash-btn{display:block;width:100%;padding:14px;background:#EEEDFE;color:#26215C;border:none;border-radius:var(--border-radius-md);font-size:15px;font-weight:500;cursor:pointer;letter-spacing:0.01em;}
+.splash-btn:hover{background:#CECBF6;}
+.how-strip{background:#EEEDFE;padding:16px;}
+.how-title{font-size:12px;font-weight:500;color:#534AB7;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;}
+.how-steps{display:flex;gap:8px;}
+.how-step{flex:1;background:#fff;border:0.5px solid #AFA9EC;border-radius:var(--border-radius-md);padding:10px 8px;text-align:center;}
+.how-step-icon{width:32px;height:32px;border-radius:50%;background:#534AB7;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;}
+.how-step-label{font-size:11px;color:#3C3489;line-height:1.4;}
+
+.scard{border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s,transform 0.1s;}
+.scard:active{transform:scale(0.98);}
+.scard-aapl{background:#EEEDFE;border-color:#AFA9EC;}.scard-aapl:hover{border-color:#7F77DD;}
+.scard-tsla{background:#E1F5EE;border-color:#9FE1CB;}.scard-tsla:hover{border-color:#5DCAA5;}
+.scard-amzn{background:#FAEEDA;border-color:#FAC775;}.scard-amzn:hover{border-color:#EF9F27;}
+.scard-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.ticker-pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:6px;}
+.pill-aapl{background:#534AB7;color:#EEEDFE;}.pill-tsla{background:#0F6E56;color:#E1F5EE;}.pill-amzn{background:#854F0B;color:#FAEEDA;}
+.s-price{font-size:20px;font-weight:500;}
+.price-aapl{color:#3C3489;}.price-tsla{color:#085041;}.price-amzn{color:#633806;}
+.s-chg{font-size:12px;margin-top:2px;}
+.up{color:#0F6E56;}.dn{color:#A32D2D;}
+.s-name{font-size:13px;font-weight:500;}
+.name-aapl{color:#3C3489;}.name-tsla{color:#085041;}.name-amzn{color:#633806;}
+.s-sector{font-size:11px;margin-top:3px;}
+.sec-aapl{color:#534AB7;}.sec-tsla{color:#1D9E75;}.sec-amzn{color:#BA7517;}
+.s-desc{font-size:12px;margin-top:6px;}
+.desc-aapl{color:#534AB7;}.desc-tsla{color:#0F6E56;}.desc-amzn{color:#854F0B;}
+.tag-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.tag{font-size:11px;padding:2px 9px;border-radius:20px;}
+.tag-aapl{background:#CECBF6;color:#26215C;}.tag-tsla{background:#9FE1CB;color:#04342C;}.tag-amzn{background:#FAC775;color:#412402;}
+.market-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.market-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.07em;}
+.live-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#0F6E56;font-weight:500;}
+.dot{width:7px;height:7px;border-radius:50%;background:#1D9E75;animation:pulse 1.5s ease-in-out infinite;}
+
+.pb-wrap{border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:12px;}
+.pb-wrap-aapl{background:#EEEDFE;}.pb-wrap-tsla{background:#E1F5EE;}.pb-wrap-amzn{background:#FAEEDA;}
+.pb-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;}
+.pb-label-aapl{color:#534AB7;}.pb-label-tsla{color:#0F6E56;}.pb-label-amzn{color:#854F0B;}
+.pb-track{height:8px;border-radius:4px;overflow:hidden;margin-bottom:12px;}
+.pb-track-aapl{background:#CECBF6;}.pb-track-tsla{background:#9FE1CB;}.pb-track-amzn{background:#FAC775;}
+.pb-fill{height:100%;border-radius:4px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
+.pb-fill-aapl{background:linear-gradient(90deg,#534AB7,#7F77DD);}.pb-fill-tsla{background:linear-gradient(90deg,#0F6E56,#1D9E75);}.pb-fill-amzn{background:linear-gradient(90deg,#854F0B,#BA7517);}
+.step-row{display:flex;gap:6px;margin-bottom:0;}
+.step-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all 0.2s;}
+.sdot-aapl-idle{background:#CECBF6;color:#534AB7;}.sdot-aapl-cur{background:#AFA9EC;color:#26215C;box-shadow:0 0 0 3px #534AB730;}.sdot-aapl-done{background:#534AB7;color:#EEEDFE;}
+.sdot-tsla-idle{background:#9FE1CB;color:#0F6E56;}.sdot-tsla-cur{background:#5DCAA5;color:#04342C;box-shadow:0 0 0 3px #0F6E5630;}.sdot-tsla-done{background:#0F6E56;color:#E1F5EE;}
+.sdot-amzn-idle{background:#FAC775;color:#854F0B;}.sdot-amzn-cur{background:#EF9F27;color:#412402;box-shadow:0 0 0 3px #854F0B30;}.sdot-amzn-done{background:#854F0B;color:#FAEEDA;}
+.q-box{border-radius:var(--border-radius-lg);padding:18px;}
+.qbox-aapl{background:#EEEDFE;}.qbox-tsla{background:#E1F5EE;}.qbox-amzn{background:#FAEEDA;}
+.q-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 11px;border-radius:20px;margin-bottom:12px;font-weight:500;}
+.qbadge-quiz-aapl{background:#534AB7;color:#EEEDFE;}.qbadge-quiz-tsla{background:#0F6E56;color:#E1F5EE;}.qbadge-quiz-amzn{background:#854F0B;color:#FAEEDA;}
+.qbadge-mini-aapl{background:#3C3489;color:#CECBF6;}.qbadge-mini-tsla{background:#085041;color:#9FE1CB;}.qbadge-mini-amzn{background:#633806;color:#FAC775;}
+.q-text{font-size:15px;font-weight:500;color:var(--color-text-primary);line-height:1.55;margin-bottom:16px;}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ans-btn{padding:12px 8px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;text-align:center;line-height:1.3;font-weight:500;border:none;transition:transform 0.1s,opacity 0.1s;}
+.ans-btn:not([disabled]):active{transform:scale(0.96);}
+.abtn-aapl{background:#CECBF6;color:#3C3489;}.abtn-aapl:not([disabled]):hover{background:#AFA9EC;}
+.abtn-tsla{background:#9FE1CB;color:#085041;}.abtn-tsla:not([disabled]):hover{background:#5DCAA5;}
+.abtn-amzn{background:#FAC775;color:#633806;}.abtn-amzn:not([disabled]):hover{background:#EF9F27;}
+.ans-btn.hit{background:#C0DD97;color:#173404;outline:2px solid #639922;}
+.ans-btn.miss{background:#F7C1C1;color:#501313;outline:2px solid #E24B4A;}
+.tf-row{display:flex;gap:10px;}
+.tf-row .ans-btn{flex:1;font-size:16px;padding:16px;}
+.fb-row{display:flex;align-items:center;gap:8px;margin-top:12px;min-height:28px;font-size:13px;color:var(--color-text-secondary);}
+.big-btn{display:block;width:100%;padding:13px;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;text-align:center;margin-top:12px;transition:opacity 0.15s,transform 0.1s;}
+.big-btn:active{transform:scale(0.98);}
+.bbtn-aapl{background:#534AB7;color:#EEEDFE;}.bbtn-aapl:hover{background:#3C3489;}
+.bbtn-tsla{background:#0F6E56;color:#E1F5EE;}.bbtn-tsla:hover{background:#085041;}
+.bbtn-amzn{background:#854F0B;color:#FAEEDA;}.bbtn-amzn:hover{background:#633806;}
+.bbtn-out-aapl{background:#CECBF6;color:#26215C;}.bbtn-out-aapl:hover{background:#AFA9EC;}
+.bbtn-out-tsla{background:#9FE1CB;color:#04342C;}.bbtn-out-tsla:hover{background:#5DCAA5;}
+.bbtn-out-amzn{background:#FAC775;color:#412402;}.bbtn-out-amzn:hover{background:#EF9F27;}
+.match-term-label{font-size:13px;font-weight:500;padding:9px 11px;border-radius:var(--border-radius-md);margin-bottom:5px;}
+.mterm-aapl{background:#AFA9EC;color:#26215C;}.mterm-tsla{background:#5DCAA5;color:#04342C;}.mterm-amzn{background:#EF9F27;color:#412402;}
+.match-opt{padding:9px 10px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;text-align:left;display:block;width:100%;margin-bottom:5px;border:none;transition:transform 0.1s;}
+.match-opt:active{transform:scale(0.98);}
+.mopt-aapl{background:#CECBF6;color:#3C3489;}.mopt-aapl:hover{background:#AFA9EC;}
+.mopt-tsla{background:#9FE1CB;color:#085041;}.mopt-tsla:hover{background:#5DCAA5;}
+.mopt-amzn{background:#FAC775;color:#633806;}.mopt-amzn:hover{background:#EF9F27;}
+.match-opt.hit{background:#C0DD97;color:#173404;outline:2px solid #639922;}
+.match-opt.miss{background:#F7C1C1;color:#501313;outline:2px solid #E24B4A;}
+.bs-scenario{font-size:14px;line-height:1.6;margin-bottom:14px;padding:14px;border-radius:var(--border-radius-md);}
+.bssc-aapl{background:#CECBF6;color:#26215C;}.bssc-tsla{background:#9FE1CB;color:#04342C;}.bssc-amzn{background:#FAC775;color:#412402;}
+.bs-row{display:flex;gap:10px;}
+.bs-btn{flex:1;padding:14px 8px;font-size:16px;font-weight:500;border:none;border-radius:var(--border-radius-md);cursor:pointer;transition:transform 0.1s;}
+.bs-btn:active{transform:scale(0.97);}
+.bsbuy-aapl{background:#534AB7;color:#EEEDFE;}.bssell-aapl{background:#AFA9EC;color:#26215C;}
+.bsbuy-tsla{background:#0F6E56;color:#E1F5EE;}.bssell-tsla{background:#5DCAA5;color:#04342C;}
+.bsbuy-amzn{background:#854F0B;color:#FAEEDA;}.bssell-amzn{background:#EF9F27;color:#412402;}
+.bs-btn.hit{background:#C0DD97;color:#173404;outline:2px solid #639922;}
+.bs-btn.miss{background:#F7C1C1;color:#501313;outline:2px solid #E24B4A;}
+.score-row{display:flex;gap:8px;margin-bottom:12px;}
+.score-tile{flex:1;border-radius:var(--border-radius-md);padding:12px 8px;text-align:center;}
+.st-aapl{background:#EEEDFE;}.st-tsla{background:#E1F5EE;}.st-amzn{background:#FAEEDA;}
+.score-num{font-size:22px;font-weight:500;}
+.snum-aapl{color:#3C3489;}.snum-tsla{color:#085041;}.snum-amzn{color:#633806;}
+.score-lbl{font-size:11px;margin-top:2px;}
+.slbl-aapl{color:#534AB7;}.slbl-tsla{color:#0F6E56;}.slbl-amzn{color:#854F0B;}
+.win-trophy{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.wt-aapl{background:linear-gradient(135deg,#534AB7,#3C3489);border:3px solid #7F77DD;}
+.wt-tsla{background:linear-gradient(135deg,#0F6E56,#085041);border:3px solid #5DCAA5;}
+.wt-amzn{background:linear-gradient(135deg,#854F0B,#633806);border:3px solid #EF9F27;}
+.conf-strip{display:flex;justify-content:center;gap:6px;margin-bottom:12px;}
+.conf-dot{width:10px;height:10px;border-radius:50%;}
+.back-btn{display:inline-flex;align-items:center;gap:4px;font-size:13px;padding:7px 12px;border-radius:var(--border-radius-md);cursor:pointer;border:none;margin-bottom:12px;transition:opacity 0.15s;}
+.challenge-counter{display:flex;gap:4px;margin-bottom:12px;}
+.cc-seg{flex:1;height:4px;border-radius:2px;}
+.cc-aapl-done{background:#534AB7;}.cc-aapl-idle{background:#CECBF6;}.cc-aapl-cur{background:#7F77DD;}
+.cc-tsla-done{background:#0F6E56;}.cc-tsla-idle{background:#9FE1CB;}.cc-tsla-cur{background:#1D9E75;}
+.cc-amzn-done{background:#854F0B;}.cc-amzn-idle{background:#FAC775;}.cc-amzn-cur{background:#BA7517;}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Play the Markets — learn to invest by completing stock challenges</h2>
+
+<div class="gw">
+  <div class="topbar">
+    <span class="topbar-title"><i class="ti ti-chart-line" aria-hidden="true" style="font-size:16px;margin-right:6px;vertical-align:-2px;"></i>Play the Markets</span>
+    <span class="topbar-wallet"><i class="ti ti-wallet" aria-hidden="true" style="font-size:14px;"></i>&nbsp;<b id="wd">$1,000</b></span>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="ticker-item">AAPL <span class="up">▲ +1.23%</span></span>
+      <span class="ticker-item">TSLA <span class="dn">▼ −1.54%</span></span>
+      <span class="ticker-item">AMZN <span class="up">▲ +0.28%</span></span>
+      <span class="ticker-item">NVDA <span class="up">▲ +3.11%</span></span>
+      <span class="ticker-item">MSFT <span class="dn">▼ −0.42%</span></span>
+      <span class="ticker-item">GOOG <span class="up">▲ +0.89%</span></span>
+      <span class="ticker-item">AAPL <span class="up">▲ +1.23%</span></span>
+      <span class="ticker-item">TSLA <span class="dn">▼ −1.54%</span></span>
+      <span class="ticker-item">AMZN <span class="up">▲ +0.28%</span></span>
+      <span class="ticker-item">NVDA <span class="up">▲ +3.11%</span></span>
+      <span class="ticker-item">MSFT <span class="dn">▼ −0.42%</span></span>
+      <span class="ticker-item">GOOG <span class="up">▲ +0.89%</span></span>
+    </div>
+  </div>
+
+  <div id="scr-splash" class="scr on" style="padding:0;">
+    <div class="splash-bg">
+      <div class="splash-icon-ring">
+        <i class="ti ti-building-bank" aria-hidden="true" style="font-size:32px;color:#EEEDFE;"></i>
+      </div>
+      <div class="splash-title">Play the Markets</div>
+      <div class="splash-sub">Learn investing by doing.<br>Pick a stock. Pass 5 challenges. Earn it.</div>
+      <div class="splash-stats">
+        <div class="splash-stat"><div class="splash-stat-num">3</div><div class="splash-stat-lbl">Stocks available</div></div>
+        <div class="splash-stat"><div class="splash-stat-num">5</div><div class="splash-stat-lbl">Challenges each</div></div>
+        <div class="splash-stat"><div class="splash-stat-num">$1K</div><div class="splash-stat-lbl">Daily budget</div></div>
+      </div>
+      <button class="splash-btn" onclick="go('home')"><i class="ti ti-player-play" aria-hidden="true" style="font-size:15px;margin-right:6px;vertical-align:-2px;"></i>Start trading</button>
+    </div>
+    <div class="how-strip">
+      <div class="how-title">How it works</div>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-icon"><i class="ti ti-eye" aria-hidden="true" style="font-size:16px;color:#EEEDFE;"></i></div>
+          <div class="how-step-label" style="font-weight:500;color:#3C3489;margin-bottom:2px;">1. Pick a stock</div>
+          <div class="how-step-label">Choose from today's featured companies</div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon" style="background:#0F6E56;"><i class="ti ti-puzzle" aria-hidden="true" style="font-size:16px;color:#E1F5EE;"></i></div>
+          <div class="how-step-label" style="font-weight:500;color:#085041;margin-bottom:2px;">2. Beat challenges</div>
+          <div class="how-step-label">3 quizzes + 2 minigames to unlock</div>
+        </div>
+        <div class="how-step">
+          <div class="how-step-icon" style="background:#854F0B;"><i class="ti ti-trophy" aria-hidden="true" style="font-size:16px;color:#FAEEDA;"></i></div>
+          <div class="how-step-label" style="font-weight:500;color:#633806;margin-bottom:2px;">3. Own it</div>
+          <div class="how-step-label">Add the stock to your portfolio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="scr-home" class="scr" style="background:var(--color-background-secondary);">
+    <div class="market-header">
+      <span class="market-label">Today's stocks</span>
+      <span class="live-dot"><span class="dot"></span>Live</span>
+    </div>
+    <div id="stock-list-home"></div>
+  </div>
+
+  <div id="scr-stock" class="scr" style="background:var(--color-background-secondary);">
+    <button id="back-stock" class="back-btn bbtn-out-aapl" onclick="go('home')"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:14px;"></i>Market</button>
+    <div id="stock-hero-card"></div>
+    <div class="pb-wrap pb-wrap-aapl" id="pb-wrap">
+      <div class="pb-label pb-label-aapl" id="pb-label"><span>Progress</span><span id="pb-frac">0 / 5</span></div>
+      <div class="pb-track pb-track-aapl" id="pb-track"><div class="pb-fill pb-fill-aapl" id="pb-fill" style="width:0%"></div></div>
+      <div class="step-row" id="step-row"></div>
+    </div>
+    <div id="stock-action"></div>
+  </div>
+
+  <div id="scr-challenge" class="scr" style="background:var(--color-background-secondary);">
+    <button id="back-chal" class="back-btn bbtn-out-aapl" onclick="go('stock')"><i class="ti ti-arrow-left" aria-hidden="true" style="font-size:14px;"></i>Back</button>
+    <div class="challenge-counter" id="chal-counter"></div>
+    <div class="q-box qbox-aapl" id="chal-box"></div>
+  </div>
+
+  <div id="scr-win" class="scr" style="background:var(--color-background-secondary);">
+    <div style="text-align:center;padding:22px 0 14px;">
+      <div class="conf-strip" id="conf-strip"></div>
+      <div class="win-trophy wt-aapl" id="win-trophy" style="animation:pop 0.4s ease both;">
+        <i class="ti ti-trophy" aria-hidden="true" style="font-size:32px;color:#EEEDFE;"></i>
+      </div>
+      <div style="font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;">Stock unlocked!</div>
+      <div id="win-sub" style="font-size:13px;color:var(--color-text-secondary);"></div>
+    </div>
+    <div class="score-row" id="score-row"></div>
+    <div id="win-card" style="border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:12px;"></div>
+    <button class="big-btn bbtn-aapl" id="win-back-btn" onclick="go('home')">Back to market</button>
+  </div>
+</div>
+
+<script>
+const C={
+  aapl:{bg:'#EEEDFE',mid:'#AFA9EC',strong:'#534AB7',dark:'#26215C',text:'#3C3489',sub:'#534AB7'},
+  tsla:{bg:'#E1F5EE',mid:'#5DCAA5',strong:'#0F6E56',dark:'#04342C',text:'#085041',sub:'#1D9E75'},
+  amzn:{bg:'#FAEEDA',mid:'#EF9F27',strong:'#854F0B',dark:'#412402',text:'#633806',sub:'#BA7517'}
+};
+const STOCKS=[
+  {id:'aapl',ticker:'AAPL',name:'Apple Inc.',price:213.45,change:+1.23,pct:+0.58,sector:'Technology',icon:'ti-brand-apple',
+    desc:'Consumer electronics & software giant behind iPhone, Mac, and the App Store ecosystem.',
+    qs:[
+      {q:"Apple's gross margin in fiscal year 2023 was approximately:",type:"mc",opts:["28%","38%","44%","52%"],ans:2},
+      {q:"Apple generates more revenue from Services (App Store, iCloud) than from Mac sales.",type:"tf",ans:true},
+      {q:"Which metric best describes how efficiently Apple converts revenue into profit?",type:"mc",opts:["Debt-to-equity ratio","Net profit margin","Current ratio","Dividend yield"],ans:1},
+      {q:"Apple has returned over $500 billion to shareholders through buybacks and dividends since 2012.",type:"tf",ans:true},
+      {q:"If Apple's EPS is $6.11 and its P/E ratio is 30, what is the implied share price?",type:"mc",opts:["$163","$183","$196","$213"],ans:1},
+    ],mini:[{type:'match'},{type:'buysell'}]},
+  {id:'tsla',ticker:'TSLA',name:'Tesla, Inc.',price:248.12,change:-3.87,pct:-1.54,sector:'Electric Vehicles',icon:'ti-car',
+    desc:'EV pioneer in electric cars, energy storage, solar, and autonomous driving technology.',
+    qs:[
+      {q:"Tesla's revenue from automotive sales makes up roughly what share of total revenue?",type:"mc",opts:["55%","70%","85%","95%"],ans:2},
+      {q:"A high P/E ratio always means a stock is overvalued and should be avoided.",type:"tf",ans:false},
+      {q:"Tesla's vehicle delivery numbers are watched closely by investors primarily because:",type:"mc",opts:["They determine CEO pay","They are a leading indicator of quarterly revenue","They set the stock split date","They affect the bond rating"],ans:1},
+      {q:"Tesla has a long history of paying consistent quarterly dividends to shareholders.",type:"tf",ans:false},
+      {q:"When a company's debt-to-equity ratio rises significantly, it generally indicates:",type:"mc",opts:["The company is more profitable","The company is taking on more financial leverage","The stock price will rise","Earnings per share will increase"],ans:1},
+    ],mini:[{type:'buysell'},{type:'match'}]},
+  {id:'amzn',ticker:'AMZN',name:'Amazon.com, Inc.',price:189.77,change:+0.54,pct:+0.28,sector:'E-commerce & Cloud',icon:'ti-package',
+    desc:"World's largest e-commerce marketplace and cloud provider, with AWS driving most profit.",
+    qs:[
+      {q:"AWS generates a disproportionately large share of Amazon's operating profit relative to its revenue share.",type:"tf",ans:true},
+      {q:"Which best describes 'free cash flow' for a company like Amazon?",type:"mc",opts:["Total revenue minus taxes","Operating cash flow minus capital expenditures","Net income plus depreciation","Cash on hand at year end"],ans:1},
+      {q:"Amazon's advertising business has grown to become one of its highest-margin revenue streams.",type:"tf",ans:true},
+      {q:"A company trading at 2x its book value means:",type:"mc",opts:["Its debt equals twice its assets","The market values it at twice its net assets","Its revenue is double its expenses","Its P/E ratio is 2"],ans:1},
+      {q:"If Amazon's revenue grows 10% but operating expenses grow 15%, what happens to operating margin?",type:"mc",opts:["It expands","It stays the same","It contracts","It depends on tax rate"],ans:2},
+    ],mini:[{type:'match'},{type:'buysell'}]}
+];
+const MATCH_POOL=[
+  {term:"Short selling",def:"Borrowing shares to sell now, hoping to buy back cheaper later",wrong:["Selling shares you own at a loss","A quick day-trade strategy","Selling bonds before maturity"]},
+  {term:"EBITDA",def:"Earnings before interest, taxes, depreciation, and amortization",wrong:["A type of stock option","The total book value of assets","Annual dividend per share"]},
+  {term:"Beta",def:"A measure of a stock's volatility relative to the broader market",wrong:["A company's credit rating","The annual dividend yield","Price divided by earnings"]},
+  {term:"Liquidity",def:"How quickly an asset can be converted to cash without a price discount",wrong:["The total cash a company holds","A company's profit margin","The volume of shares traded daily"]},
+  {term:"Dilution",def:"Reduction in existing shareholders' ownership when new shares are issued",wrong:["A drop in stock price","A reverse stock split","Buying back outstanding shares"]},
+  {term:"Yield curve",def:"A chart plotting interest rates across different bond maturity dates",wrong:["A graph of stock returns over time","A company's dividend history chart","A measure of market volatility"]},
+  {term:"Margin call",def:"A broker's demand to deposit more funds when account equity falls below minimum",wrong:["A request to increase a credit limit","A company's call to raise new capital","A dividend reinvestment notice"]},
+];
+const BS_POOL=[
+  {s:"A company's CFO unexpectedly sells 80% of their personal holdings. Earnings are due in two weeks.",correct:"Sell",tip:"Insider selling ahead of earnings can signal the CFO knows results will disappoint."},
+  {s:"The Federal Reserve signals it will cut interest rates three times in the next year.",correct:"Buy",tip:"Rate cuts lower borrowing costs and tend to boost equity valuations, especially for growth stocks."},
+  {s:"A competitor files for bankruptcy, eliminating one of the company's top two rivals.",correct:"Buy",tip:"Reduced competition typically leads to market share gains and improved pricing power."},
+  {s:"The company announces a secondary share offering of 15% more shares to fund expansion.",correct:"Sell",tip:"Dilution from new share issuance reduces EPS and often pressures the stock price short-term."},
+  {s:"Inflation data comes in hotter than expected, raising fears of further interest rate hikes.",correct:"Sell",tip:"Higher rates compress P/E multiples and increase the discount rate applied to future earnings."},
+  {s:"The company beats earnings estimates for the 8th consecutive quarter and raises full-year guidance.",correct:"Buy",tip:"Consistent beats with raised guidance signal strong execution and growing earnings power."},
+  {s:"A major activist investor acquires a 9% stake and publicly pushes for a strategic review.",correct:"Buy",tip:"Activist involvement often triggers restructuring, buybacks, or a sale process that unlocks value."},
+];
+let wallet=1000,cur=null,order=[],idx=0,flags=[],correct=0;
+function go(s){
+  document.querySelectorAll('.scr').forEach(e=>e.classList.remove('on'));
+  const el=document.getElementById('scr-'+s);
+  el.classList.add('on');
+  el.style.animation='none';el.offsetHeight;el.style.animation='fadeIn 0.25s ease both';
+}
+function applyTheme(id){
+  document.getElementById('back-stock').className=`back-btn bbtn-out-${id}`;
+  document.getElementById('back-chal').className=`back-btn bbtn-out-${id}`;
+  document.getElementById('pb-wrap').className=`pb-wrap pb-wrap-${id}`;
+  document.getElementById('pb-label').className=`pb-label pb-label-${id}`;
+  document.getElementById('pb-track').className=`pb-track pb-track-${id}`;
+  document.getElementById('pb-fill').className=`pb-fill pb-fill-${id}`;
+  document.getElementById('chal-box').className=`q-box qbox-${id}`;
+}
+function renderHome(){
+  document.getElementById('stock-list-home').innerHTML=STOCKS.map((s,i)=>`
+    <div class="scard scard-${s.id}" onclick="pickStock(${i})">
+      <div class="scard-top">
+        <div>
+          <div class="ticker-pill pill-${s.id}"><i class="ti ${s.icon}" aria-hidden="true" style="font-size:13px;"></i>${s.ticker}</div>
+          <div class="s-price price-${s.id}">$${s.price.toFixed(2)}</div>
+          <div class="s-chg ${s.change>=0?'up':'dn'}">${s.change>=0?'+':''}${s.change.toFixed(2)} (${s.pct>=0?'+':''}${s.pct.toFixed(2)}%)</div>
+        </div>
+        <div style="text-align:right;max-width:150px;">
+          <div class="s-name name-${s.id}">${s.name}</div>
+          <div class="s-sector sec-${s.id}">${s.sector}</div>
+        </div>
+      </div>
+      <div class="s-desc desc-${s.id}">${s.desc}</div>
+      <div class="tag-row">
+        <span class="tag tag-${s.id}"><i class="ti ti-help-circle" aria-hidden="true" style="font-size:11px;margin-right:2px;vertical-align:-1px;"></i>3 quizzes</span>
+        <span class="tag tag-${s.id}"><i class="ti ti-device-gamepad-2" aria-hidden="true" style="font-size:11px;margin-right:2px;vertical-align:-1px;"></i>2 minigames</span>
+        <span class="tag tag-${s.id}"><i class="ti ti-coin" aria-hidden="true" style="font-size:11px;margin-right:2px;vertical-align:-1px;"></i>$${s.price.toFixed(2)}</span>
+      </div>
+    </div>`).join('');
+}
+function pickStock(i){
+  cur=STOCKS[i];idx=0;flags=[];correct=0;
+  let qi=[0,1,2,3,4].sort(()=>Math.random()-0.5).slice(0,3);
+  order=[{type:'quiz',idx:qi[0]},{type:'quiz',idx:qi[1]},{type:'mini',idx:0},{type:'quiz',idx:qi[2]},{type:'mini',idx:1}];
+  applyTheme(cur.id);renderStock();go('stock');
+}
+function renderStock(){
+  const s=cur;
+  document.getElementById('stock-hero-card').innerHTML=`
+    <div class="scard scard-${s.id}" style="cursor:default;margin-bottom:12px;">
+      <div class="scard-top">
+        <div>
+          <div class="ticker-pill pill-${s.id}"><i class="ti ${s.icon}" aria-hidden="true" style="font-size:13px;"></i>${s.ticker}</div>
+          <div class="s-price price-${s.id}">$${s.price.toFixed(2)}</div>
+          <div class="s-chg ${s.change>=0?'up':'dn'}">${s.change>=0?'+':''}${s.change.toFixed(2)} (${s.pct>=0?'+':''}${s.pct.toFixed(2)}%)</div>
+        </div>
+        <div style="text-align:right;max-width:150px;">
+          <div class="s-name name-${s.id}">${s.name}</div>
+          <div class="s-sector sec-${s.id}">${s.sector}</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('pb-frac').textContent=idx+' / 5';
+  document.getElementById('pb-fill').style.width=Math.round((idx/5)*100)+'%';
+  document.getElementById('step-row').innerHTML=order.map((c,i)=>{
+    const done=flags[i],active=i===idx,icon=c.type==='quiz'?'ti-help-circle':'ti-device-gamepad-2';
+    const cls=done?`sdot-${s.id}-done`:active?`sdot-${s.id}-cur`:`sdot-${s.id}-idle`;
+    return `<div class="step-dot ${cls}">${done?'<i class="ti ti-check" aria-hidden="true"></i>':`<i class="ti ${icon}" aria-hidden="true"></i>`}</div>`;
+  }).join('');
+  if(idx>=5){
+    document.getElementById('stock-action').innerHTML=`<button class="big-btn bbtn-${s.id}" style="animation:pulse 1.5s ease-in-out infinite;" onclick="purchaseStock()"><i class="ti ti-trophy" aria-hidden="true" style="font-size:15px;margin-right:6px;vertical-align:-2px;"></i>Unlock ${s.ticker}!</button>`;
+  } else {
+    const label=order[idx].type==='quiz'?'Quiz':'Minigame';
+    document.getElementById('stock-action').innerHTML=`<button class="big-btn bbtn-${s.id}" onclick="startC()"><i class="ti ti-player-play" aria-hidden="true" style="font-size:14px;margin-right:6px;vertical-align:-2px;"></i>Start ${label} ${idx+1} of 5</button>`;
+  }
+}
+function renderCounter(){
+  const s=cur;
+  document.getElementById('chal-counter').innerHTML=order.map((_,i)=>{
+    const cls=i<idx?`cc-${s.id}-done`:i===idx?`cc-${s.id}-cur`:`cc-${s.id}-idle`;
+    return `<div class="cc-seg ${cls}"></div>`;
+  }).join('');
+}
+function startC(){const c=order[idx];renderCounter();if(c.type==='quiz')buildQuiz(c.idx);else buildMini(c.idx);go('challenge');}
+function qBadgeClass(type){return`q-badge qbadge-${type}-${cur.id}`;}
+function buildQuiz(qi){
+  const q=cur.qs[qi],s=cur;
+  document.getElementById('chal-box').innerHTML=`
+    <span class="${qBadgeClass('quiz')}"><i class="ti ti-help-circle" aria-hidden="true" style="font-size:12px;"></i>Quiz · ${idx+1} of 5</span>
+    <div class="q-text">${q.q}</div>
+    <div id="ans-area"></div>
+    <div class="fb-row" id="fb"></div>
+    <button class="big-btn bbtn-${s.id}" id="qnext" style="display:none;" onclick="doneC()">Continue <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:14px;vertical-align:-2px;"></i></button>`;
+  const a=document.getElementById('ans-area');
+  if(q.type==='mc'){
+    a.innerHTML=`<div class="ans-grid">${q.opts.map((o,i)=>`<button class="ans-btn abtn-${s.id}" onclick="ansM(${i},${q.ans},'${o.replace(/'/g,"\\'")}','${q.opts[q.ans].replace(/'/g,"\\'")}')"><span>${o}</span></button>`).join('')}</div>`;
+  } else {
+    a.innerHTML=`<div class="tf-row"><button class="ans-btn abtn-${s.id}" onclick="ansT(true,${q.ans})">True</button><button class="ans-btn abtn-${s.id}" onclick="ansT(false,${q.ans})">False</button></div>`;
+  }
+}
+window.ansM=function(i,ans,chosen,correctText){
+  document.querySelectorAll('.ans-btn').forEach((b,j)=>{b.disabled=true;if(j===ans)b.classList.add('hit');if(j===i&&i!==ans)b.classList.add('miss');});
+  const ok=i===ans;if(ok)correct++;
+  document.getElementById('fb').innerHTML=ok?`<i class="ti ti-circle-check" style="color:#3B6D11;font-size:18px;" aria-hidden="true"></i><span style="color:#3B6D11;">Correct!</span>`:`<i class="ti ti-circle-x" style="color:#A32D2D;font-size:18px;" aria-hidden="true"></i><span style="color:#A32D2D;">Answer: ${correctText}</span>`;
+  document.getElementById('qnext').style.display='block';
+};
+window.ansT=function(val,ans){
+  const ok=val===ans;if(ok)correct++;
+  document.querySelectorAll('.ans-btn').forEach(b=>{b.disabled=true;if((b.textContent==='True'&&ans===true)||(b.textContent==='False'&&ans===false))b.classList.add('hit');if(!ok&&((b.textContent==='True'&&val===true)||(b.textContent==='False'&&val===false)))b.classList.add('miss');});
+  document.getElementById('fb').innerHTML=ok?`<i class="ti ti-circle-check" style="color:#3B6D11;font-size:18px;" aria-hidden="true"></i><span style="color:#3B6D11;">Correct!</span>`:`<i class="ti ti-circle-x" style="color:#A32D2D;font-size:18px;" aria-hidden="true"></i><span style="color:#A32D2D;">Answer: ${ans?'True':'False'}</span>`;
+  document.getElementById('qnext').style.display='block';
+};
+function buildMini(mi){
+  const s=cur;
+  document.getElementById('chal-box').innerHTML=`<span class="${qBadgeClass('mini')}"><i class="ti ti-device-gamepad-2" aria-hidden="true" style="font-size:12px;"></i>Minigame · ${idx+1} of 5</span><div id="mini-inner"></div>`;
+  if(s.mini[mi].type==='match') buildMatch();else buildBS();
+}
+function buildMatch(){
+  const s=cur;
+  const pool=[...MATCH_POOL].sort(()=>Math.random()-0.5).slice(0,3);
+  let solved=0;
+  document.getElementById('mini-inner').innerHTML=`<div class="q-text" style="font-size:14px;">Match each term to its correct definition:</div>`+
+    pool.map((item,i)=>{
+      const opts=[item.def,...item.wrong.slice(0,2)].sort(()=>Math.random()-0.5);
+      return `<div style="margin-bottom:12px;">
+        <div class="match-term-label mterm-${s.id}">${item.term}</div>
+        <div>${opts.map(o=>`<button class="match-opt mopt-${s.id}" data-row="${i}" data-correct="${o===item.def}" onclick="pickM(this,${i})">${o}</button>`).join('')}</div>
+      </div>`;
+    }).join('')+`<button class="big-btn bbtn-${s.id}" id="mnext" style="display:none;" onclick="doneC()">Continue <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:14px;vertical-align:-2px;"></i></button>`;
+  window.pickM=function(btn,row){
+    document.querySelectorAll(`[data-row="${row}"]`).forEach(b=>b.disabled=true);
+    const ok=btn.dataset.correct==='true';
+    if(ok){btn.classList.add('hit');correct++;}
+    else{btn.classList.add('miss');document.querySelectorAll(`[data-row="${row}"]`).forEach(b=>{if(b.dataset.correct==='true')b.classList.add('hit');});}
+    solved++;if(solved>=pool.length)setTimeout(()=>document.getElementById('mnext').style.display='block',300);
+  };
+}
+function buildBS(){
+  const s=cur;
+  const pool=[...BS_POOL].sort(()=>Math.random()-0.5).slice(0,3);
+  let cur2=0,ls=0;
+  function show(){
+    if(cur2>=pool.length){
+      document.getElementById('mini-inner').innerHTML=`<div style="text-align:center;padding:20px 0;">
+        <div style="font-size:36px;font-weight:500;color:${C[s.id].text};">${ls}<span style="font-size:18px;color:${C[s.id].sub};">/${pool.length}</span></div>
+        <div style="font-size:13px;color:var(--color-text-secondary);margin-top:4px;">${ls===pool.length?'Perfect instincts!':ls>=2?'Solid trading sense!':'Keep studying the market!'}</div>
+      </div><button class="big-btn bbtn-${s.id}" onclick="doneC()">Continue <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:14px;vertical-align:-2px;"></i></button>`;
+      return;
+    }
+    const sc=pool[cur2];
+    document.getElementById('mini-inner').innerHTML=`
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px;font-weight:500;">Scenario ${cur2+1} of ${pool.length}</div>
+      <div class="bs-scenario bssc-${s.id}">${sc.s}</div>
+      <div class="bs-row">
+        <button class="bs-btn bsbuy-${s.id}" onclick="pickBS('Buy','${sc.correct}','${sc.tip.replace(/'/g,"\\'")}')"><i class="ti ti-trending-up" aria-hidden="true" style="font-size:16px;display:block;margin:0 auto 4px;"></i>Buy</button>
+        <button class="bs-btn bssell-${s.id}" onclick="pickBS('Sell','${sc.correct}','${sc.tip.replace(/'/g,"\\'")}')"><i class="ti ti-trending-down" aria-hidden="true" style="font-size:16px;display:block;margin:0 auto 4px;"></i>Sell</button>
+      </div>
+      <div class="fb-row" id="bsfb"></div>`;
+    window.pickBS=function(chosen,correct_ans,tip){
+      const ok=chosen===correct_ans;if(ok){ls++;correct++;}
+      document.querySelectorAll('.bs-btn').forEach(b=>{b.disabled=true;if(b.textContent.trim().endsWith(correct_ans))b.classList.add('hit');if(b.textContent.trim().endsWith(chosen)&&!ok)b.classList.add('miss');});
+      document.getElementById('bsfb').innerHTML=(ok?`<i class="ti ti-circle-check" style="color:#3B6D11;font-size:18px;" aria-hidden="true"></i>`:`<i class="ti ti-circle-x" style="color:#A32D2D;font-size:18px;" aria-hidden="true"></i>`)+` <span style="color:var(--color-text-secondary);">${tip}</span>`;
+      cur2++;setTimeout(show,1900);
+    };
+  }
+  show();
+}
+function doneC(){flags[idx]=true;idx++;renderStock();go('stock');}
+function purchaseStock(){
+  const s=cur;wallet=Math.round((wallet-s.price)*100)/100;
+  document.getElementById('wd').textContent='$'+wallet.toFixed(2);
+  document.getElementById('conf-strip').innerHTML=[C[s.id].strong,C[s.id].mid,'#C0DD97','#F7C1C1',C[s.id].dark].map(c=>`<div class="conf-dot" style="background:${c};"></div>`).join('');
+  document.getElementById('win-trophy').className=`win-trophy wt-${s.id}`;
+  document.getElementById('win-sub').textContent=`${s.ticker} · ${s.name} added to your portfolio!`;
+  document.getElementById('score-row').innerHTML=`
+    <div class="score-tile st-${s.id}"><div class="score-num snum-${s.id}">${correct}</div><div class="score-lbl slbl-${s.id}">Correct answers</div></div>
+    <div class="score-tile st-${s.id}"><div class="score-num snum-${s.id}">$${s.price.toFixed(2)}</div><div class="score-lbl slbl-${s.id}">Stock price</div></div>
+    <div class="score-tile st-${s.id}"><div class="score-num snum-${s.id}">$${wallet.toFixed(2)}</div><div class="score-lbl slbl-${s.id}">Budget left</div></div>`;
+  document.getElementById('win-card').style.cssText=`background:${C[s.id].bg};border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:12px;`;
+  document.getElementById('win-card').innerHTML=`
+    <div class="ticker-pill pill-${s.id}" style="margin-bottom:8px;"><i class="ti ${s.icon}" aria-hidden="true" style="font-size:13px;"></i>${s.ticker}</div>
+    <div style="font-size:13px;font-weight:500;color:${C[s.id].text};">${s.name}</div>
+    <div style="font-size:12px;color:${C[s.id].sub};margin-top:2px;">${s.sector}</div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid ${C[s.id].mid};font-size:12px;color:${C[s.id].sub};">3 quizzes + 2 minigames completed <i class="ti ti-circle-check" style="color:#3B6D11;vertical-align:-2px;" aria-hidden="true"></i></div>`;
+  document.getElementById('win-back-btn').className=`big-btn bbtn-${s.id}`;
+  go('win');
+}
+renderHome();
+</script>
